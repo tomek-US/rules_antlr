@@ -44,12 +44,12 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 http_archive(
     name = "rules_antlr",
     sha256 = "",
-    strip_prefix = "rules_antlr-0.7.0",
-    urls = ["https://github.com/tomek-US/rules_antlr/archive/0.7.0.tar.gz"],
+    strip_prefix = "rules_antlr-0.8.0",
+    urls = ["https://github.com/tomek-US/rules_antlr/archive/0.8.0.tar.gz"],
 )
 
 load("@rules_antlr//antlr:repositories.bzl", "rules_antlr_dependencies")
-rules_antlr_dependencies("4.11.1")
+rules_antlr_dependencies("4.13.0")
 ```
 
 More detailed instructions can be found in the [Setup](docs/setup.md#setup) document.

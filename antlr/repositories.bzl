@@ -3,17 +3,27 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_jar")
 load(":lang.bzl", "C", "CPP", "GO", "JAVA", "OBJC", "PYTHON", "PYTHON2", "PYTHON3", supportedLanguages = "supported")
 
-v4 = [4, "4.7.1", "4.7.2", "4.8", "4.11.1"]
+v4 = [4, "4.7.1", "4.7.2", "4.8", "4.9.3", "4.11.1", "4.13.0"]
 v4_opt = [4, "4.7.1", "4.7.2", "4.7.3", "4.7.4"]
 v3 = [3, "3.5.2"]
 v2 = [2, "2.7.7"]
 
 PACKAGES = {
     "antlr": {
+        "4.13.0": {
+            "url": "https://github.com/antlr/antlr4/archive/4.13.0.tar.gz",
+            "prefix": "antlr4-4.13.0",
+            "sha256": "b7082b539256e6de5137a7d57afe89493dce234a3ce686dbae709ef6cf2d2c81",
+        },
         "4.11.1": {
             "url": "https://github.com/antlr/antlr4/archive/4.11.1.tar.gz",
             "prefix": "antlr4-4.11.1",
             "sha256": "81f87f03bb83b48da62e4fc8bfdaf447efb9fb3b7f19eb5cbc37f64e171218cf",
+        },
+        "4.9.3": {
+            "url": "https://github.com/antlr/antlr4/archive/4.9.3.tar.gz",
+            "prefix": "antlr4-4.9.3",
+            "sha256": "efe4057d75ab48145d4683100fec7f77d7f87fa258707330cadd1f8e6f7eecae",
         },
         "4.8": {
             "url": "https://github.com/antlr/antlr4/archive/4.8.tar.gz",
@@ -43,9 +53,17 @@ PACKAGES = {
         },
     },
     "antlr4_runtime": {
+        "4.13.0": {
+            "path": "org/antlr/antlr4-runtime/4.13.0/antlr4-runtime-4.13.0.jar",
+            "sha256": "bd7f7b5d07bc0b047f10915b32ca4bb1de9e57d8049098882e4453c88c076a5d",
+        },
         "4.11.1": {
             "path": "org/antlr/antlr4-runtime/4.11.1/antlr4-runtime-4.11.1.jar",
             "sha256": "e06c6553c1ccc14d36052ec4b0fc6f13b808cf957b5b1dc3f61bf401996ada59",
+        },
+        "4.9.3": {
+            "path": "org/antlr/antlr4-runtime/4.9.3/antlr4-runtime-4.9.3.jar",
+            "sha256": "131a6594969bc4f321d652ea2a33bc0e378ca312685ef87791b2c60b29d01ea5",
         },
         "4.8": {
             "path": "org/antlr/antlr4-runtime/4.8/antlr4-runtime-4.8.jar",
@@ -77,9 +95,17 @@ PACKAGES = {
         },
     },
     "antlr4_tool": {
+        "4.13.0": {
+            "path": "org/antlr/antlr4/4.13.0/antlr4-4.13.0.jar",
+            "sha256": "",
+        },
         "4.11.1": {
             "path": "org/antlr/antlr4/4.11.1/antlr4-4.11.1.jar",
             "sha256": "e9686e8a663ca512afe3a2eeb6f6ad3f303abb46188991f19ebc6a0fd9c1c14f",
+        },
+        "4.9.3": {
+            "path": "org/antlr/antlr4/4.9.3/antlr4-4.9.3.jar",
+            "sha256": "386fec520b8962fe37f448af383920ea33d7a532314b36d7ba9ccec1ba95eb37",
         },
         "4.8": {
             "path": "org/antlr/antlr4/4.8/antlr4-4.8.jar",
@@ -192,8 +218,12 @@ def rules_antlr_dependencies(*versionsAndLanguages):
             languages = [JAVA]
 
         for version in sorted(versions, key = _toString):
-            if version == 4 or version == "4.8":
+            if version == 4 or version == "4.9.3":
+                _antlr493_dependencies(languages)
+            elif version == "4.8":
                 _antlr48_dependencies(languages)
+            elif version == "4.13.0":
+                _antlr4130_dependencies(languages)
             elif version == "4.11.1":
                 _antlr4111_dependencies(languages)
             elif version == "4.7.2":
@@ -232,6 +262,19 @@ def rules_antlr_optimized_dependencies(version):
     else:
         fail('Unsupported ANTLR version provided: "{0}". Currently supported are: {1}'.format(version, v4_opt), attr = "version")
 
+def _antlr4130_dependencies(languages):
+    _antlr4_dependencies(
+        "4.13.0",
+        languages,
+        {
+            "antlr4_runtime": "4.13.0",
+            "antlr4_tool": "4.13.0",
+            "antlr3_runtime": "3.5.2",
+            "stringtemplate4": "4.3",
+            "javax_json": "1.0.4",
+        },
+    )
+
 def _antlr4111_dependencies(languages):
     _antlr4_dependencies(
         "4.11.1",
@@ -245,6 +288,18 @@ def _antlr4111_dependencies(languages):
         },
     )
 
+def _antlr493_dependencies(languages):
+    _antlr4_dependencies(
+        "4.9.3",
+        languages,
+        {
+            "antlr4_runtime": "4.9.3",
+            "antlr4_tool": "4.9.3",
+            "antlr3_runtime": "3.5.2",
+            "stringtemplate4": "4.3",
+            "javax_json": "1.0.4",
+        },
+    )
 
 def _antlr48_dependencies(languages):
     _antlr4_dependencies(
